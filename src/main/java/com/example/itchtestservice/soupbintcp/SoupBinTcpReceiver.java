@@ -1,14 +1,17 @@
 package com.example.itchtestservice.soupbintcp;
 
 import com.example.itchtestservice.parser.Parse;
+import com.example.itchtestservice.parser.ParseDS;
+import com.example.itchtestservice.parser.Parsers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 @Service
 public class SoupBinTcpReceiver {
@@ -18,55 +21,110 @@ public class SoupBinTcpReceiver {
     @Value("${tcp.server.port}")
     private int serverPort;
 
+    private InetAddress host;
 
-    public String consumeMessage() throws IOException {
 
-        Socket socket = new Socket(serverHost, serverPort);
+    public String login() throws IOException {
+        host = InetAddress.getLocalHost();
 
-        InputStream inputStream = socket.getInputStream();
+        Socket socket = new Socket(host, 1024);
 
         System.out.println("socket.isConnected() = " + socket.isConnected());
 
-//        System.out.println("inputStream = " + inputStream);
-//
-//        int read = inputStream.read();
-//        System.out.println("read = " + read);
-//        byte[] payload = new byte[read];
-//        System.out.println("payload = " + new String(payload));
+//        while (true) {
 
-//        int i = 0;
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            String loginMessage = "user 123";
+            writer.write(loginMessage);
+            writer.flush();
+
+//            Scanner scanner  = new Scanner(socket.getInputStream());
 //
-//        while ((i = inputStream.read()) != -1) {
+//            if (scanner.hasNext()){
+//                String response = scanner.nextLine();
 //
-//            // converts integer to character
-//            char c = (char) i;
-//
-//            // prints character
-//            System.out.print("c  = " + c);
+//                if (response.equals("success")) break;
+//            }
+
 //        }
 
-
-        InputStreamReader reader = new InputStreamReader(inputStream);
-        int character = reader.read();
-        System.out.println("reader.getEncoding() = " + reader.getEncoding());
-        System.out.println("character = " + character);
-
-        byte[] payloadBytes = inputStream.readAllBytes();
-
-        System.out.println("payloadBytes = " + payloadBytes);
-
-        String fileName = new String(payloadBytes, StandardCharsets.UTF_8);
-
-        System.out.println("fileName = " + fileName);
-
-//        fileName = "C:\\Users\\MrAkmal\\Desktop\\Dohasec\\01302019.NASDAQ_ITCH50";
-
-        Parse parse = new Parse(fileName, "C:\\Users\\MrAkmal\\Desktop\\Dohasec\\itch-test-service\\src\\main\\resources\\itch5.yaml");
-
-        parse.parse();
-
-        return "success";
+        return "login success";
     }
+
+
+    public String messageParse() throws IOException {
+
+        host = InetAddress.getLocalHost();
+
+        Socket socket = new Socket(host, 1024);
+
+        System.out.println("socket.isConnected() = " + socket.isConnected());
+
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//
+//        reader.readLine()
+
+
+        InputStream inputStream = socket.getInputStream();
+        while (true) {
+            byte[] buffer = new byte[1024];
+            int bytesRead = inputStream.read(buffer);
+
+            System.out.println("bytesRead = " + bytesRead);
+            if (bytesRead == -1) {
+                // End of stream, connection closed
+                break;
+            }
+
+            // Parse and process the received ITCH message
+            Parsers parsers = new Parsers(new ParseDS("C:\\Users\\MrAkmal\\Desktop\\Dohasec\\itch-test-service\\src\\main\\resources\\itch5.yaml"));
+
+            ArrayList<String> messageArray = parsers.messageIn(buffer);
+
+            System.out.println("messageArray = " + messageArray);
+
+        }
+
+
+        return " ";
+    }
+
+
+//    public String consumeMessage() throws IOException {
+//
+//        host = InetAddress.getLocalHost();
+//
+//        boolean check = true;
+//
+//        String fileName = "";
+//        while (check) {
+//            Socket socket = new Socket(host, 1024);
+//
+//            System.out.println("socket.isConnected() = " + socket.isConnected());
+//
+//            Scanner scanner = new Scanner(socket.getInputStream());
+//
+//
+//            if (scanner.hasNext()) {
+//
+//                fileName = scanner.nextLine();
+//
+//                System.out.println("scanner.nextLine() = " + fileName);
+//                check = false;
+//            }
+//        }
+//
+//
+////        String fileName = "C:\\Users\\MrAkmal\\Desktop\\Dohasec\\01302019.NASDAQ_ITCH50";
+//
+//        Parse parse = new Parse(fileName, "C:\\Users\\MrAkmal\\Desktop\\Dohasec\\itch-test-service\\src\\main\\resources\\itch5.yaml");
+//
+//        while (parse.parse() != null) {
+//        }
+//
+//        return "success";
+//    }
 
 
 }

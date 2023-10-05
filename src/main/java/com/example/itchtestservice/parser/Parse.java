@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class Parse {
+public class
+Parse {
 
     private Parsers parsers;
     private ParseDS parseDS;
 
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     public Parse(String fileName, String yamlFile) {
 
@@ -34,14 +35,26 @@ public class Parse {
 
     public byte[] parse() throws IOException {
 
+        if (inputStream.read() == -1) { // EOF
+            return null;
+        }
+
+
         int payloadLength = inputStream.read();
+
+        System.out.println("payloadLength = " + payloadLength);
         byte[] payloadBytes = new byte[payloadLength];
+
+        int offset = 0;  // Loop until we've read the full payload size
+        while (offset < payloadLength) {
+            offset += inputStream.read(payloadBytes, offset, payloadLength - offset);
+        }
 
         ArrayList<String> messageArray = parsers.messageIn(payloadBytes);
 
         System.out.println("messageArray = " + messageArray);
 
-        return null;
+        return payloadBytes;
     }
 
 }

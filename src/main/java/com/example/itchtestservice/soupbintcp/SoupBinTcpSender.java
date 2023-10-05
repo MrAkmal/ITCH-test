@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 @RestController
 @RequestMapping("/tcp")
@@ -14,9 +16,15 @@ public class SoupBinTcpSender {
     private SoupBinTcpReceiver receiver;
 
 
-    @RequestMapping("/connect")
-    public String connect() throws IOException {
-        return receiver.consumeMessage();
+
+    @RequestMapping("/handle")
+    public String handle() throws IOException {
+        return receiver.messageParse();
+    }
+
+    @RequestMapping("/login")
+    public String login() throws IOException {
+        return receiver.login();
     }
 
 

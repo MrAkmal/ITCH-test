@@ -8,10 +8,10 @@ import java.util.Arrays;
 public class Parsers {
 
 
-    private ParseDS parseDS;
+    private final ParseDS parseDS;
 
 
-    Parsers(ParseDS parseDS) {
+    public Parsers(ParseDS parseDS) {
         this.parseDS = parseDS;
     }
 
@@ -45,6 +45,8 @@ public class Parsers {
         // increment after look at first char
         messagePointer = messagePointer + 1;
         // Get the fields for this message
+
+        System.out.println("messageType = " + messageType);
         ArrayList<Object> fieldsArray = this.parseDS.getFields(messageType);
         // loop over fields array, parsing messages --start at 1, we already have messageType
         for (int i = 1; i < fieldsArray.size(); i++) {
