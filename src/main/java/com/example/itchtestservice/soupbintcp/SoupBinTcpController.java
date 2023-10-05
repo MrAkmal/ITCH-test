@@ -5,15 +5,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
 
 @RestController
 @RequestMapping("/tcp")
-public class SoupBinTcpSender {
+public class SoupBinTcpController {
 
     @Autowired
-    private SoupBinTcpReceiver receiver;
+    private SoupBinTcpService receiver;
 
 
 

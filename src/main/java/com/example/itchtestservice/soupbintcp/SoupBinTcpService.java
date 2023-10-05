@@ -1,6 +1,5 @@
 package com.example.itchtestservice.soupbintcp;
 
-import com.example.itchtestservice.parser.Parse;
 import com.example.itchtestservice.parser.ParseDS;
 import com.example.itchtestservice.parser.Parsers;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,12 +8,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 @Service
-public class SoupBinTcpReceiver {
+public class SoupBinTcpService {
 
     @Value("${server.host}")
     private String serverHost;
